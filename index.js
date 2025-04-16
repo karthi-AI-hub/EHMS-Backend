@@ -25,9 +25,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: "*", // Allow all origins for testing; restrict in production
         methods: ["GET", "POST", "PUT", "DELETE"],
     },
+    path: "/ehms/api/socket.io", // Ensure this matches the frontend configuration
 });
 
 // Middleware
@@ -95,10 +96,14 @@ app.use((err, req, res, next) => {
     console.error("Error-handling middleware triggered:", err.stack);
     res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
 });
+// Add this at the top of your routes or server file
+app.get('/', (req, res) => {
+    res.send('Backend is up and running!');
+  });  
 
 // Start the server
 const PORT = process.env.PORT;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
 
